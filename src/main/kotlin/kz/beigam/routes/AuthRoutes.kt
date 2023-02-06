@@ -22,10 +22,7 @@ fun Route.signUp(
     userDataSource: UserDataSource
 ) {
     post("signup") {
-        val request = call.receiveOrNull<AuthRequest>() ?: kotlin.run {
-            call.respond(HttpStatusCode.BadRequest)
-            return@post
-        }
+        val request = call.receive<AuthRequest>()
         val areFieldsBlank = request.username.isBlank() || request.password.isBlank()
         val isPasswordShort = request.password.length < 8
 
@@ -63,7 +60,7 @@ fun Route.signIn(
     tokenConfig: TokenConfig
 ) {
     post("signin") {
-        val request = call.receiveOrNull<AuthRequest>() ?: kotlin.run {
+        val request = kotlin.runCatching { call.receiveNullable<AuthRequest>() }.getOrNull() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@post
         }

@@ -17,7 +17,7 @@ fun Application.module() {
     val mongoPassword = "test"//System.getenv("MONGO_PASSWORD")
     val dbName = "test"
     val db = KMongo.createClient(
-        connectionString = "mongodb+srv://test:$mongoPassword@localhost:27021/$dbName?retryWrites=true&w=majority"
+        connectionString = "mongodb://test:$mongoPassword@localhost:27021/$dbName?retryWrites=true&w=majority"
     )
         .coroutine
         .getDatabase(dbName)
@@ -28,7 +28,7 @@ fun Application.module() {
         issuer = environment.config.property("jwt.issuer").getString(),
         audience = environment.config.property("jwt.audience").getString(),
         exiresIn = 365L * 1000L * 60L * 24L,
-        secret = System.getenv("JWT_SECRET")
+        secret = "secret"//System.getenv("JWT_SECRET")
     )
     val hashingService = SHA256HashingService()
 
