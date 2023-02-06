@@ -14,10 +14,13 @@ fun main(args: Array<String>): Unit =
 
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
-    val mongoPassword = "test"//System.getenv("MONGO_PASSWORD")
-    val dbName = "test"
+    val mongoUser = environment.config.property("mongo.username").getString()//System.getenv("MONGO_PASSWORD")
+    val mongoPassword = environment.config.property("mongo.password").getString()//System.getenv("MONGO_PASSWORD")
+    val dbName = environment.config.property("mongo.database").getString()
+    val host = environment.config.property("mongo.host").getString()
+
     val db = KMongo.createClient(
-        connectionString = "mongodb://test:$mongoPassword@localhost:27021/$dbName?retryWrites=true&w=majority"
+        connectionString = "mongodb://$mongoUser:$mongoPassword@$host/$dbName?retryWrites=true&w=majority"
     )
         .coroutine
         .getDatabase(dbName)
