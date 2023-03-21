@@ -1,0 +1,7 @@
+POST http://0.0.0.0:8081/signin
+Content-Type: application/json
+
+{
+  "username": "ruslan",
+  "password": "ruslan1978"
+}
