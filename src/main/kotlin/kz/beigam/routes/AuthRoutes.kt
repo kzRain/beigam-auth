@@ -110,3 +110,35 @@ fun Route.getSecretInfo() {
         }
     }
 }
+
+fun Route.testRoutes(
+    userDataSource: UserDataSource
+) {
+    route("test") {
+        get("all_users") {
+            val result = userDataSource.getAllUsers().map { it.toResponse() }
+            call.respond(
+                status = HttpStatusCode.OK,
+                message = result
+            )
+        }
+
+        get("user/{username}") {
+            val username = call.parameters["username"]
+            if (username == null) {
+                call.respond(HttpStatusCode.Conflict, "Incorrect username")
+                return@get
+            } else {
+                val user = userDataSource.getUserByUsername(username)
+                if (user != null)
+                    call.respond(
+                        status = HttpStatusCode.OK,
+                        message = user.toResponse()
+                    )
+                else
+                    call.respond(HttpStatusCode.NotFound, "User not found")
+
+            }
+        }
+    }
+}

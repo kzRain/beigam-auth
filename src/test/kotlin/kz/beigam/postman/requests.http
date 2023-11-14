@@ -5,3 +5,6 @@ Content-Type: application/json
   "username": "ruslan",
   "password": "ruslan1978"
 }
+
+###
+GET http://0.0.0.0:8081/test/all_users
