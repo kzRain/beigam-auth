@@ -1,11 +1,13 @@
 package kz.beigam
 
 import io.ktor.server.application.*
-import kz.beigam.data.MongoUserDataSource
+import kz.beigam.data.source.company.MongoCompanyDataSource
+import kz.beigam.data.source.user.MongoUserDataSource
 import kz.beigam.plugins.*
 import kz.beigam.security.hashing.SHA256HashingService
 import kz.beigam.security.token.JwtTokenService
 import kz.beigam.security.token.TokenConfig
+import kz.beigam.service.UserServiceDefault
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 
@@ -26,6 +28,7 @@ fun Application.module() {
         .getDatabase(dbName)
 
     val userDataSource = MongoUserDataSource(db)
+    val companyDataSource = MongoCompanyDataSource(db)
     val tokenService = JwtTokenService()
     val tokenConfig = TokenConfig(
         issuer = environment.config.property("jwt.issuer").getString(),
@@ -34,7 +37,7 @@ fun Application.module() {
         secret = "secret"//System.getenv("JWT_SECRET")
     )
     val hashingService = SHA256HashingService()
-
+    val userService = UserServiceDefault(userDataSource, hashingService)
     configureMonitoring()
     configureSerialization()
     configureSecurity(tokenConfig)
@@ -42,7 +45,9 @@ fun Application.module() {
         userDataSource = userDataSource,
         hashingService = hashingService,
         tokenService = tokenService,
-        tokenConfig = tokenConfig
+        tokenConfig = tokenConfig,
+        userService = userService,
+        companyDataSource = companyDataSource
     )
 
 }

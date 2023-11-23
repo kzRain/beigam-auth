@@ -1,3 +1,12 @@
+###
+POST http://0.0.0.0:8081/signup
+Content-Type: application/json
+
+{
+  "username": "ruslanTest",
+  "password": "ruslan1978"
+}
+###
 POST http://0.0.0.0:8081/signin
 Content-Type: application/json
 
@@ -5,6 +14,29 @@ Content-Type: application/json
   "username": "ruslan",
   "password": "ruslan1978"
 }
-
 ###
 GET http://0.0.0.0:8081/test/all_users
+###
+GET http://0.0.0.0:8081/secret
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1c2VycyIsImlzcyI6Imh0dHBzOi8vMC4wLjAuMDo4MDgxIiwiZXhwIjoxNzAxMjM5NjAwLCJ1c2VySWQiOiI2NDE5YTI0MGQ4MmZkOTQwYjhjOTdhOTkifQ.Q9cYxaFY1gzwoll8-i34I2E6NkMahF40UeTH1AGrZmA
+###
+POST http://0.0.0.0:8081/company/create
+Content-Type: application/json
+
+{
+  "companyName": "Company"
+}
+###
+GET http://0.0.0.0:8081/company/all
+
+###
+GET http://0.0.0.0:8081/company/655f220e26e4a36a5b584ba3/users
+
+###
+PUT http://0.0.0.0:8081/company/655f220e26e4a36a5b584ba3/add_user/6419a240d82fd940b8c97a99
+Content-Type: application/json
+
+["ADMIN"]
+###
+GET http://0.0.0.0:8081/user/companies
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1c2VycyIsImlzcyI6Imh0dHBzOi8vMC4wLjAuMDo4MDgxIiwiZXhwIjoxNzAxMjM5NjAwLCJ1c2VySWQiOiI2NDE5YTI0MGQ4MmZkOTQwYjhjOTdhOTkifQ.Q9cYxaFY1gzwoll8-i34I2E6NkMahF40UeTH1AGrZmA

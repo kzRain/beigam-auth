@@ -7,47 +7,31 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kz.beigam.data.UserDataSource
-import kz.beigam.data.models.User
 import kz.beigam.data.models.requests.AuthRequest
 import kz.beigam.data.models.responses.AuthResponse
+import kz.beigam.data.source.UserDataSource
+import kz.beigam.exceptions.UserException
 import kz.beigam.security.hashing.HashingService
 import kz.beigam.security.hashing.SaltedHash
 import kz.beigam.security.token.JwtTokenService
 import kz.beigam.security.token.TokenClaim
 import kz.beigam.security.token.TokenConfig
+import kz.beigam.service.UserService
 
 fun Route.signUp(
-    hashingService: HashingService,
-    userDataSource: UserDataSource
+    userService: UserService
 ) {
     post("signup") {
-        val request = call.receive<AuthRequest>()
-        val areFieldsBlank = request.username.isBlank() || request.password.isBlank()
-        val isPasswordShort = request.password.length < 8
-
-        if (userDataSource.getUserByUsername(request.username) != null) {
-            call.respond(HttpStatusCode.Conflict, "Username is already exists")
-            return@post
-        }
-
-        if (areFieldsBlank || isPasswordShort) {
-            call.respond(HttpStatusCode.Conflict)
-            return@post
-        }
-
-        val saltedHash = hashingService.generateSaltedHash(request.password)
-        val user = User(
-            username = request.username,
-            password = saltedHash.hash,
-            salt = saltedHash.salt
-        )
-        val wasAcknowledged = userDataSource.insertUser(user)
-        if (!wasAcknowledged) {
-            call.respond(HttpStatusCode.Conflict)
-            return@post
-        } else {
+        try {
+            val request = call.receive<AuthRequest>()
+            userService.createUser(request)
             call.respond(HttpStatusCode.OK)
+        } catch (e: UserException) {
+            call.respond(HttpStatusCode.Conflict, e.message?:"Error user creation")
+            return@post
+        } catch (e: ContentTransformationException) {
+            call.respond(HttpStatusCode.Conflict, e.message?:"Error data")
+            return@post
         }
     }
 }

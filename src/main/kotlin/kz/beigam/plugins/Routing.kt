@@ -2,26 +2,29 @@ package kz.beigam.plugins
 
 import io.ktor.server.routing.*
 import io.ktor.server.application.*
-import kz.beigam.data.UserDataSource
-import kz.beigam.routes.getSecretInfo
-import kz.beigam.routes.signIn
-import kz.beigam.routes.signUp
-import kz.beigam.routes.testRoutes
+import kz.beigam.data.source.CompanyDataSource
+import kz.beigam.data.source.UserDataSource
+import kz.beigam.routes.*
 import kz.beigam.security.hashing.HashingService
 import kz.beigam.security.token.JwtTokenService
 import kz.beigam.security.token.TokenConfig
+import kz.beigam.service.UserService
 
 fun Application.configureRouting(
     userDataSource: UserDataSource,
     hashingService: HashingService,
     tokenService: JwtTokenService,
-    tokenConfig: TokenConfig
+    tokenConfig: TokenConfig,
+    userService: UserService,
+    companyDataSource: CompanyDataSource
 ) {
 
     routing {
-        signUp(hashingService = hashingService, userDataSource = userDataSource)
+        signUp(userService)
         signIn(userDataSource, hashingService, tokenService, tokenConfig)
         getSecretInfo()
         testRoutes(userDataSource)
+        companies(companyDataSource)
+        users(userDataSource)
     }
 }
