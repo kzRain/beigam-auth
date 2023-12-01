@@ -45,12 +45,12 @@ fun Route.signIn(
 ) {
     post("signin") {
         val request = kotlin.runCatching { call.receiveNullable<AuthRequest>() }.getOrNull() ?: kotlin.run {
-            call.respond(HttpStatusCode.BadRequest)
+            call.respond(HttpStatusCode.BadRequest,AuthResponse(error="Incorrect request data"))
             return@post
         }
         val user = userDataSource.getUserByUsername(request.username)
         if (user == null) {
-            call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
+            call.respond(HttpStatusCode.Conflict, AuthResponse(error="Incorrect username or password"))
             return@post
         }
 
@@ -63,7 +63,7 @@ fun Route.signIn(
         )
 
         if (!isValidPassword) {
-            call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
+            call.respond(HttpStatusCode.Conflict, AuthResponse(error="Incorrect username or password"))
             return@post
         }
 
